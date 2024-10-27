@@ -563,8 +563,8 @@ async def main():
  ▗▄▖ ▗▖   ▗▄▄▄▖▗▖  ▗▖ ▗▄▖ 
 ▐▌ ▐▌▐▌   ▐▌    ▝▚▞▘ ▐▌ ▐▌
 ▐▛▀▜▌▐▌   ▐▛▀▀▘  ▐▌  ▐▛▀▜▌
-▐▌ ▐▌▐▙▄▄▖▐▙▄▄▖▗▞▚▖▐▌ ▐▌
-    Auto Claim Bot For Blum - Cucumber Automation
+▐▌ ▐▌▐▙▄▄▖▐▙▄▄▖▗▞▚▖ ▐▌  ▐▌
+    Blum Bot Enhanced By - TheTeamAlexa| Asad Ali
     Github  : https://github.com/TheTeamAlexa
     Telegram: https://t.me/TheTeamAlexa
         {Style.RESET_ALL}"""
