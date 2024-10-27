@@ -44,8 +44,6 @@ log_file = "http.log"
 proxy_file = "proxies.txt"
 data_file = "data.txt"
 config_file = "config.json"
-
-
 class Config:
     def __init__(self, auto_task, auto_game, auto_claim, low, high, clow, chigh):
         self.auto_task = auto_task
@@ -55,8 +53,6 @@ class Config:
         self.high = high
         self.clow = clow
         self.chigh = chigh
-
-
 class BlumTod:
     def __init__(self, id, query, proxies, config: Config):
         self.p = id
@@ -90,13 +86,11 @@ class BlumTod:
             "accept-encoding": "gzip, deflate",
             "accept-language": "en,en-US;q=0.9",
         }
-
     def log(self, msg):
         now = datetime.now().isoformat().split("T")[1].split(".")[0]
         print(
             f"{black}[{now}]{white}-{blue}[{white}acc {self.p + 1}{blue}]{white} {msg}{reset}"
         )
-
     async def ipinfo(self):
         ipinfo1_url = "https://ipapi.co/json/"
         ipinfo2_url = "https://ipwho.is/"
@@ -149,7 +143,6 @@ class BlumTod:
                 if "<title>" in res.text:
                     self.log(f"{yellow}failed get json response !")
                     return None
-
                 return res
             except (
                     httpx.ProxyError,
@@ -174,7 +167,6 @@ class BlumTod:
                 self.log(f"{yellow}connection close without response !")
                 await asyncio.sleep(3)
                 continue
-
     def is_expired(self, token):
         if token is None or isinstance(token, bool):
             return True
