@@ -3,6 +3,7 @@ import re
 import sys
 import json
 import anyio
+from payload import get_payload
 import httpx
 import random
 import uuid
@@ -44,6 +45,8 @@ log_file = "http.log"
 proxy_file = "proxies.txt"
 data_file = "data.txt"
 config_file = "config.json"
+
+
 class Config:
     def __init__(self, auto_task, auto_game, auto_claim, low, high, clow, chigh):
         self.auto_task = auto_task
@@ -53,6 +56,8 @@ class Config:
         self.high = high
         self.clow = clow
         self.chigh = chigh
+
+
 class BlumTod:
     def __init__(self, id, query, proxies, config: Config):
         self.p = id
@@ -86,11 +91,13 @@ class BlumTod:
             "accept-encoding": "gzip, deflate",
             "accept-language": "en,en-US;q=0.9",
         }
+
     def log(self, msg):
         now = datetime.now().isoformat().split("T")[1].split(".")[0]
         print(
             f"{black}[{now}]{white}-{blue}[{white}acc {self.p + 1}{blue}]{white} {msg}{reset}"
         )
+
     async def ipinfo(self):
         ipinfo1_url = "https://ipapi.co/json/"
         ipinfo2_url = "https://ipwho.is/"
@@ -143,6 +150,7 @@ class BlumTod:
                 if "<title>" in res.text:
                     self.log(f"{yellow}failed get json response !")
                     return None
+
                 return res
             except (
                     httpx.ProxyError,
@@ -167,6 +175,7 @@ class BlumTod:
                 self.log(f"{yellow}connection close without response !")
                 await asyncio.sleep(3)
                 continue
+
     def is_expired(self, token):
         if token is None or isinstance(token, bool):
             return True
@@ -311,7 +320,7 @@ class BlumTod:
                 end_farming = farming.get("endTime")
                 if timestamp > (end_farming / 1000):
                     res_ = await self.http(farming_claim_url, self.headers, "")
-                    if res_.status_code != 200:
+                    if res_ and res_.status_code != 200:
                         self.log(f"{red}failed claim farming !")
                     else:
                         self.log(f"{green}success claim farming !")
@@ -355,17 +364,10 @@ class BlumTod:
             claim_url = "https://game-domain.blum.codes/api/v2/game/claim"
             dogs_url = 'https://game-domain.blum.codes/api/v2/game/eligibility/dogs_drop'
 
-            #проверяем - доступен ли сервер декодирования
             try:
-
-                PAYLOAD_SERVER_URL = "https://server2.ggtog.live/api/game"
                 random_uuid = str(uuid.uuid4())
-                points = random.randint(self.cfg.low, self.cfg.high)
-                payload_data = {'gameId': random_uuid,
-                                'points': str(points),
-                                "dogs": 0}
-                resp = requests.post(PAYLOAD_SERVER_URL, json=payload_data)
-                data = resp.json()
+                point = random.randint(self.cfg.low, self.cfg.high)
+                data = await get_payload(gameId=random_uuid, points=point)
 
                 if "payload" in data:
                     self.log(f"{green}Games available right now!")
@@ -373,13 +375,39 @@ class BlumTod:
 
                 else:
                     self.log(f"{red}Failed start games - {e}")
-                    self.log(f"{red}Games are not available right now!")
+                    self.log(f"{red}Install node.js!")
                     game = False
-
             except Exception as e:
                 self.log(f"{red}Failed start games - {e}")
-                self.log(f"{red}Games are not available right now!")
+                self.log(f"{red}Install node.js!")
                 game = False
+
+
+            #проверяем - доступен ли сервер декодирования
+            # try:
+            #
+            #     PAYLOAD_SERVER_URL = "https://server2.ggtog.live/api/game"
+            #     random_uuid = str(uuid.uuid4())
+            #     points = random.randint(self.cfg.low, self.cfg.high)
+            #     payload_data = {'gameId': random_uuid,
+            #                     'points': str(points),
+            #                     "dogs": 0}
+            #     resp = requests.post(PAYLOAD_SERVER_URL, json=payload_data)
+            #     data = resp.json()
+            #
+            #     if "payload" in data:
+            #         self.log(f"{green}Games available right now!")
+            #         game = True
+            #
+            #     else:
+            #         self.log(f"{red}Failed start games - {e}")
+            #         self.log(f"{red}Games are not available right now!")
+            #         game = False
+            #
+            # except Exception as e:
+            #     self.log(f"{red}Failed start games - {e}")
+            #     self.log(f"{red}Games are not available right now!")
+            #     game = False
 
 
             while game:
@@ -435,11 +463,11 @@ class BlumTod:
                         if eligible:
                             dogs = random.randint(25, 30) * 5
                             self.log(f'dogs = {dogs}')
-                            payload = await self.create_payload(game_id=game_id, points=point,
-                                                             dogs=dogs)
+                            # payload = await self.create_payload(game_id=game_id, points=point,dogs=dogs)
+                            payload = await get_payload(gameId=game_id, points=point)
                         else:
-                            payload = await self.create_payload(game_id=game_id, points=point,
-                                                             dogs=0)
+                            # payload = await self.create_payload(game_id=game_id, points=point,dogs=0)
+                            payload = await get_payload(gameId=game_id, points=point)
 
                         await countdown(random.randint(31, 40))
 
@@ -552,10 +580,10 @@ async def get_data(data_file, proxy_file):
 async def main():
     init()
     banner = f"""{Fore.GREEN}
- ▗▄▖ ▗▖   ▗▄▄▄▖▗▖  ▗▖ ▗▄▖ 
-▐▌ ▐▌▐▌   ▐▌    ▝▚▞▘ ▐▌ ▐▌
-▐▛▀▜▌▐▌   ▐▛▀▀▘  ▐▌  ▐▛▀▜▌
-▐▌ ▐▌▐▙▄▄▖▐▙▄▄▖▗▞▚▖ ▐▌  ▐▌
+ ▗▄▖. ▗▖   ▗▄▄▄▖▗▖ ▗▖ ▗▄▖ 
+▐▌ ▐▌▐▌   ▐▌     ▝▚▞▘ ▐▌ ▐▌
+▐▛▀▜ ▐▌   ▐▛▀▀▘  ▐▌  ▐▛▀▜▌
+▐▌ ▐▌▐▙▄▄▐▙▄▄▖▗▞▚  ▐▌  ▐▌
     Blum Bot Enhanced By - TheTeamAlexa| Asad Ali
     Github  : https://github.com/TheTeamAlexa
     Telegram: https://t.me/TheTeamAlexa
