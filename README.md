@@ -78,7 +78,7 @@ nano data.txt
 To view a report of the total balance of all accounts you can run a file called `report.py`
 
 
-## How to get tgWebAppData (query_id / user_id)
+## How to get query ID through tgWebAppData (query_id / user_id)
 
 1. Login telegram via portable or web version
 2. Launch the bot
