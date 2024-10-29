@@ -57,15 +57,15 @@ This script/program supports several argument parameters that can be used. Here'
    pkg install python3
    ```
    Then use all of these command at once
-   ```shell
-   pkg update && pkg upgrade -y
+```txt
+pkg update && pkg upgrade -y
 pkg install python rust git -y
 pkg install nano
 git clone https://github.com/TheTeamAlexa/Blum.git
 cd Blum
 pip install -r requirements.txt
 nano data.txt
-   ```
+```
 2. Edit the `data.txt` file, enter your query data into the `data.txt` file. One line for 1 account, if you want to add a 2nd account, fill it in on a new line.
 
 6. Run the program/script.
@@ -78,7 +78,7 @@ nano data.txt
 To view a report of the total balance of all accounts you can run a file called `report.py`
 
 
-## How to get query ID through tgWebAppData (query_id / user_id)
+## How to get tgWebAppData (query_id / user_id)
 
 1. Login telegram via portable or web version
 2. Launch the bot
